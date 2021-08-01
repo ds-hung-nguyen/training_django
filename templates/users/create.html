@@ -1,0 +1,137 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{% translate 'user_create_page_title' %}</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fa fa-chevron-up"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <form class="input-form" action="{% url 'users.create' %}" method="POST">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <p><span class="text-danger">*</span> {% translate 'input_required_notice' %}</p>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="text-right">
+                            <a href="{% url 'users.index' %}" class="btn btn-default btn-custom mr-2 unload">
+                                <i class="fas fa-arrow-circle-left"></i> {% translate 'cancel' %}
+                            </a>
+                            <button type="submit" class="btn bg-info btn-custom unload">
+                                {% translate 'save' %} <i class="fas fa-arrow-circle-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="form-block-title mb-3">{% translate 'user_create_title' %}</h5>
+
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label for="username"><span class="text-danger">*</span> {% translate 'user_user_name' %}
+                        </label>
+                        <div class="row">
+                            <div class="col-12">
+                                <input type="text" name="username" maxlength="150"
+                                       class="form-control {% if form.username.errors %} is-invalid {% endif %}"
+                                       placeholder="{% translate 'user_user_name' %}"
+                                       value="{{ form.username.value|default_if_none:'' }}"/>
+                                {% if form.username.errors %}
+                                    <div class="text-danger">{{ form.username.errors|escape }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label for="email"><span class="text-danger">*</span> {% translate 'user_email' %}</label>
+                        <div class="row">
+                            <div class="col-12">
+                                <input type="text" name="email" maxlength="254"
+                                       class="form-control {% if form.email.errors %} is-invalid {% endif %}"
+                                       placeholder="{% translate 'user_email' %}"
+                                       value="{{ form.email.value|default_if_none:'' }}"/>
+                                {% if form.email.errors %}
+                                    <div class="text-danger">{{ form.email.errors|escape }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label for="first_name"><span class="text-danger">*</span> {% translate 'user_name' %}
+                        </label>
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="text" name="first_name" maxlength="150"
+                                       class="form-control {% if form.first_name.errors %} is-invalid {% endif %}"
+                                       placeholder="{% translate 'user_first_name' %}"
+                                       value="{{ form.first_name.value|default_if_none:'' }}"/>
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger">{{ form.first_name.errors|escape }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-6">
+                                <input type="text" name="last_name" maxlength="150"
+                                       class="form-control {% if form.last_name.errors %} is-invalid {% endif %}"
+                                       placeholder="{% translate 'user_last_name' %}"
+                                       value="{{ form.last_name.value|default_if_none:'' }}"/>
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger">{{ form.last_name.errors|escape }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label for="password"><span class="text-danger">*</span> {% translate 'user_password' %}</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="password" name="password" maxlength="128"
+                                       class="form-control {% if form.password.errors %} is-invalid {% endif %}"
+                                       placeholder="{% translate 'user_password' %}"
+                                       value="{{ form.password.value|default_if_none:'' }}"/>
+                                {% if form.password.errors %}
+                                    <div class="text-danger">{{ form.password.errors|escape }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-6">
+                                <input type="password" name="password_confirm" maxlength="128"
+                                       class="form-control {% if form.password_confirm.errors %} is-invalid {% endif %}"
+                                       placeholder="{% translate 'user_password_confirm' %}"
+                                       value="{{ form.password_confirm.value|default_if_none:'' }}"/>
+                                {% if form.password_confirm.errors %}
+                                    <div class="text-danger">{{ form.password_confirm.errors|escape }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-6 d-flex">
+                        <label for="is_admin">{% translate 'user_is_admin' %}</label>
+                        <div class="ml-2 row">
+                            <div class="col-md-6">
+                                <input type="checkbox" name="is_admin" class="custom-control custom-checkbox"
+                                       {% if form.is_admin.value %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

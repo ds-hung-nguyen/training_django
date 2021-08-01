@@ -1,0 +1,119 @@
+{% load static %}
+{% load i18n %}
+{% load custom_tags %}
+<script src="{% static 'admin-lte/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'admin-lte/plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+<script>
+    $.widget.bridge('uibutton', $.ui.button);
+</script>
+
+<script src="{% static 'admin-lte/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js' %} "></script>
+<script src="{% static 'admin-lte/dist/js/adminlte.min.js' %}"></script>
+
+<script type="text/javascript">
+    $.extend(true, $.fn.dataTable.defaults, {
+            searching: false,
+            processing: false,
+            serverSide: true,
+            info: true,
+            paging: true,
+            length: {% constants 'PAGE_SIZE_DEFAULT' %},
+            ajax: {
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                beforeSend: function() {
+                    if (typeof hideValidationMessages === 'function') {
+                        hideValidationMessages();
+                    }
+                },
+                error: function (response, status, error) {
+                    let data = response.responseJSON;
+                    if(response.status && response.status == 422){
+                        if (typeof data.errors != 'undefined' && data.errors != null) {
+                            if (typeof showValidationMessages === 'function') {
+                                showValidationMessages(data.errors);
+                            }
+                        }
+                    }
+                }
+            },
+            dom: '<"d-md-flex align-items-md-baseline datatable-pagi" <"col-lg-3 pl-0 d-sm-flex"i><"col-lg-9 pr-0 d-md-flex justify-content-md-end align-items-md-baseline pl-0" <"mr-3 d-md-block d-none"l> <"d-md-block d-none"p> <"mt-3 d-md-none d-block"l> <"d-flex d-md-none d-block mt-2"p> > >rt<"bottom"f><"clear">',
+            language: {
+                'sEmptyTable':     '{% translate 'datatables_empty_table' %}',
+                'sInfo':           '{% translate 'datatables_info' %}',
+                'sInfoEmpty':      '{% translate 'datatables_info_empty' %}',
+                'sInfoFiltered':   '{% translate 'datatables_info_filtered' %}',
+                'sInfoPostFix':    '',
+                'sInfoThousands':  ',',
+                'sLengthMenu':     '{% translate 'datatables_length_menu' %}',
+                'sLoadingRecords': '{% translate 'datatables_loading_records' %}',
+                'sProcessing':     '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>',
+                'sSearch':         '{% translate 'datatables_search' %}',
+                'sZeroRecords':    '{% translate 'datatables_zero_records' %}',
+                'oPaginate': {
+                    'sFirst':    '{% translate 'datatables_paginate_first' %}',
+                    'sLast':     '{% translate 'datatables_paginate_last' %}',
+                    'sNext':     '{% translate 'datatables_paginate_next' %}',
+                    'sPrevious': '{% translate 'datatables_paginate_previous' %}'
+                },
+                'oAria': {
+                    'sSortAscending':  '{% translate 'datatables_aria_sort_ascending' %}',
+                    'sSortDescending': '{% translate 'datatables_aria_sort_descending' %}'
+                }
+            },
+            fnPreDrawCallback : function() {
+                $(this).parent().parent().find('.alert').remove();
+                $('.dataTables_processing').removeClass('card');
+            }
+        });
+    $.fn.dataTable.ext.errMode = 'none';
+
+    $('.card').on('expanded.lte.cardwidget', function () {
+        $(this).find('.fa-chevron-down:first').addClass('fa-chevron-up').removeClass('fa-chevron-down');
+    });
+
+    $('.card').on('collapsed.lte.cardwidget', function () {
+        $(this).find('.fa-chevron-up:first').addClass('fa-chevron-down').removeClass('fa-chevron-up');
+    });
+
+    $(document).on('click','#btn-search, #btn-reset', function(e){
+        $('.alert').hide();
+    });
+
+    $(document).on('click', '.input-form .unload', function(e){
+        $(window).off('beforeunload');
+    });
+
+    $(document).ready(function() {
+        $(document).on('change', '.input-form input, .input-form select, .input-form textarea', function(e){
+            $(window).bind('beforeunload', function(e) {
+                return true;
+            });
+        });
+    });
+
+    function showMessageSuccess(msg) {
+        $('#ajax-alert').html('<div class="alert alert-success">' + msg + '</div>');
+    }
+
+    function showMessageError(msg) {
+        $('#ajax-alert').html('<div class="alert alert-danger">' + msg + '</div>');
+    }
+
+    $(document).ajaxStart(function() {
+        showLoading();
+    }).ajaxStop(function () {
+        hideLoading();
+    });
+
+    function showLoading() {
+        $('#overlay').fadeIn(300);
+    }
+
+    function hideLoading() {
+        $('#overlay').fadeOut(300);
+    }
+</script>

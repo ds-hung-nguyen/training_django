@@ -1,0 +1,153 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+{% load i18n %}
+{% block header %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="col-12 col-md-auto mt-2 text-right">
+                    <a href="{% url 'posts.create' %}" class="btn btn-info" style="color: white">{% translate 'create' %} <i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock header %}
+{% block content %}
+    <div class="card">
+        <div class="card-header" data-card-widget="collapse">
+            <h3 class="card-title font-weight-bold">
+                <i class="fa fa-search"></i>
+                {% translate 'search' %}
+            </h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool">
+                    <i class="fa fa-chevron-up"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <form class="input-form" id="post-search-form">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <label class="col-form-label font-weight-bold">{% translate 'post_title' %}</label>
+                            <input type="text" name="title" maxlength="200" id="title" class="form-control" placeholder="{% translate 'post_title' %}"/>
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+                <div class="row form-group">
+                    <div class="col text-center">
+                        <button type="submit" class="btn btn-info col-xl-2 col-lg-3 mr-2 mb-3 mb-lg-0" id="btn-search">
+                            {% translate 'search' %} <i class="fa fa-search"></i>
+                        </button>
+                        <button type="button" class="btn btn-default col-xl-2 col-lg-3" id="btn-reset">
+                            {% translate 'clear' %} <i class="fa fa-undo"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card mt-3">
+        <div class="card-header">
+            <h3 class="card-title font-weight-bold">
+                <i class="fa fa-list-ul"></i>
+                {% translate 'post_list_title' %}
+            </h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fa fa-chevron-up"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="post-table" class="table table-bordered table-custom w-custom title-wrap text-center display nowrap w-100">
+                    <thead class="bg-primary">
+                        <tr>
+                            <th> {% translate 'post_id' %} </th>
+                            <th> {% translate 'post_title' %} </th>
+                            <th> {% translate 'post_author' %} </th>
+                            {% if user.is_superuser %}
+                            <th> {% translate 'approve' %} </th>
+                            {% endif %}
+                            <th> {% translate 'edit' %} </th>
+                            <th> {% translate 'delete' %} </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block modals %}
+    {% include 'posts/partials/modals/delete_post.html' %}
+    {% if user.is_superuser %}
+    {% include 'posts/partials/modals/approve_post.html' %}
+    {% endif %}
+{% endblock modals %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        let table;
+        $(document).ready(function() {
+            table = $('#post-table').DataTable({
+                'order': [[ 0, 'desc']],
+                ajax: {
+                    url: '{% url 'posts.search' %}',
+                    type: 'POST',
+                    data: function(data) {
+                        let formData = $('#post-search-form').serializeArray();
+                        $.each(formData, function(index, input) {
+                            data[input.name] = input.value;
+                        });
+                    },
+                },
+                columns: [
+                    { data: 'id'},
+                    { data: 'title'},
+                    { data: 'author__username'},
+                    {% if user.is_superuser %}
+                    {
+                        data: 'approved_link',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            if (!row.approved) {
+                                return '<a href="javascript:void(0)" onclick="initApprovePostModal(\'' + data + '\')"><i class="fa fa-table-size fa-edit text-warning"></i></a>'
+                            }
+                            return '';
+                        }
+                    },
+                    {% endif %}
+                    {
+                        data: 'edit_link',
+                        orderable: false,
+                        render: function (data, type) {
+                            return '<a href="' + data + '"><i class="fa fa-table-size fa-edit text-warning"></i></a>'
+                        }
+                    },
+                    {
+                        data: 'delete_link',
+                        orderable: false,
+                        render: function (data, type) {
+                            return '<a href="javascript:void(0)" onclick="initDeletePostModal(\'' + data + '\')"><i class="fa fa-table-size fa-trash text-danger"></i></a>'
+                        }
+                    },
+                ]
+            });
+
+            $('#btn-search').on('click', function (e) {
+                e.preventDefault();
+                table.ajax.reload();
+            });
+
+            $('#btn-reset').on('click', function (e) {
+                let form = $(this).closest('form');
+                form.find('input[type=text]').val('');
+                table.ajax.reload();
+            })
+        });
+    </script>
+{% endblock javascript %}

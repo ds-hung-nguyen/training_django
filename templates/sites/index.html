@@ -1,0 +1,51 @@
+{% extends 'layouts/site.html' %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+    <div class="container pt-5">
+        <div class="col-md-12" id="post-list">
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        let currentPage = 0;
+        $(document).ready(function () {
+            getPosts();
+
+            function getPosts() {
+                $.ajax({
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    url: '{% url 'posts.list' %}',
+                    type: 'POST',
+                    data: {'page': currentPage}
+                }).done(function (response) {
+                    generatePost(response);
+                });
+            }
+
+            function generatePost(data) {
+                if (currentPage == 0 && data.length == 0) {
+                    $('#post-list').append('<div class="text-center"><h1>{% translate 'no_post' %}</h1></div>');
+                    return;
+                }
+                $.each(data, function (index, post) {
+                    $('#post-list').append('<h1>' + post.title + '</h1><p>' + post.body
+                        + '</p><div><span class="badge badge-secondary">{% translate 'posted_by' %}:' + post.author__username
+                        + '</span><span class="badge badge-secondary ml-1">{% translate 'posted' %}:' + post.created_at + '</span></div><hr>'
+                    );
+                });
+            }
+
+            $(window).scroll(function () {
+                if ($(window).scrollTop() + $(window).height() >= $(document).height()) {
+                    currentPage = currentPage + 1;
+                    getPosts();
+                }
+            });
+        });
+    </script>
+{% endblock javascript %}

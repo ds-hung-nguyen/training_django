@@ -1,0 +1,48 @@
+{% load adminlte_helpers %}
+{% load static %}
+{% load i18n %}
+<aside class="main-sidebar elevation-4 sidebar-dark-primary">
+    <a href="#" class="brand-link">
+        <img src="{% static 'images/logo.png' %}" class="brand-image img-circle elevation-3" style="opacity: .8;">
+        <span class="brand-text font-weight-light text-white title-default-color">{% translate 'manager_site_name' %}</span>
+    </a>
+
+    <div class="sidebar">
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu" data-accordion="true">
+                <li class="nav-item has-tree-view {% if 'posts.' in request.resolver_match.url_name %}menu-open{% endif %}">
+                    <a href="javascript:void(0);" class="nav-link {% if 'posts.' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="fas fa-layer-group"></i>
+                        <p>{% translate 'menu_posts' %}</p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'posts.index' %}" class="nav-link {% if 'posts.' in request.resolver_match.url_name %}active{% endif %}">
+                                <i class="fas fa-layer-group ml-3"></i>
+                                <p>{% translate 'menu_posts' %}</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            {% if user.is_superuser %}
+            <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu" data-accordion="true">
+                <li class="nav-item has-tree-view {% if 'users.' in request.resolver_match.url_name %}menu-open{% endif %}">
+                    <a href="javascript:void(0);" class="nav-link {% if 'users.' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="fas fa-user"></i>
+                        <p>{% translate 'menu_users' %}</p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'users.index' %}" class="nav-link {% if 'users.' in request.resolver_match.url_name %}active{% endif %}">
+                                <i class="fas fa-user ml-3"></i>
+                                <p>{% translate 'menu_users' %}</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            {% endif %}
+        </nav>
+    </div>
+</aside>

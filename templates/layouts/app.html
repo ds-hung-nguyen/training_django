@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    {% include '../partials/head.html' with title=title only %}
+
+    <body class='sidebar-mini accent-primary dark-mode control-sidebar-slide-open'>
+        <div class='wrapper'>
+            {% include '../partials/navbar.html' %}
+            {% include '../partials/sidebar.html' %}
+
+            <div class='content-wrapper pl-3 pr-3'>
+                <session class='content-header'>
+                    {% block header %}
+                    {% endblock header %}
+                </session>
+
+                <session class='content'>
+                    <div class='container-fluid'>
+                        <div class="row">
+                            <div class="col">
+                                {% include '../partials/alert.html' %}
+                            </div>
+                        </div>
+                        {% block content %}
+                        {% endblock content %}
+                    </div>
+                </session>
+            </div>
+
+            {% include '../partials/footer.html' %}
+            {% include '../partials/loading.html' %}
+            {% csrf_token %}
+        </div>
+        {% include '../partials/javascript.html' %}
+        {% block javascript %}
+        {% endblock javascript %}
+        {% include 'auth/partials/modals/logout.html' %}
+        {% block modals %}
+        {% endblock modals %}
+    </body>
+</html>

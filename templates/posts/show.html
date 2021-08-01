@@ -1,0 +1,47 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{% translate 'post_show_page_title' %}</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fa fa-chevron-up"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3 mt-3">
+                <div class="col-md-4">
+                    <a href="{% url 'posts.index' %}" class="btn col-md-5 btn-default">{% translate 'list' %}</a>
+                    <a href="{% url 'posts.edit' post.id %}" class="btn col-md-5 btn-default">{% translate 'edit' %}</a>
+                </div>
+            </div>
+
+            <h5 class="form-block-title-confirm mb-3">{% translate 'post_show_title' %}</h5>
+            <table class="table table-striped mb-5">
+                <tbody>
+                <tr>
+                    <th>{% translate 'post_title' %}</th>
+                    <td>
+                        {{ post.title }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{% translate 'post_body' %}</th>
+                    <td>
+                        {{ post.body|safe }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{% translate 'post_author' %}</th>
+                    <td>
+                        {{ post.author.username }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}

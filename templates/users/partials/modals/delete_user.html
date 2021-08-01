@@ -1,0 +1,52 @@
+{% load i18n %}
+<div class="modal fade" id="delete-user-modal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                {% translate 'user_delete_title' %}
+                <button type="button" class="close" data-dismiss="modal" aria-label="{% translate 'close' %}">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-center mt-5 mb-5">{% translate 'delete_confirm' %}</p>
+                <div class="form-group text-center">
+                    <button type='button' class='btn btn-default rounded-pill col-lg-3' data-dismiss='modal'>{% translate 'cancel' %}</button>
+                    <button type='button' class='btn btn-info rounded-pill col-lg-3 mb-3 mt-lg-0 mt-3 m-lg-0' onclick="deleteUser()">{% translate 'confirm' %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function initDeleteUserModal(url) {
+        initDeleteUserModalData(url);
+        $('#delete-user-modal').modal('show');
+    }
+
+    let deleteUserEndpoint;
+    function initDeleteUserModalData(url) {
+        deleteUserEndpoint = url;
+    }
+
+    function deleteUser() {
+        $.ajax({
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            method: 'POST',
+            url: deleteUserEndpoint,
+            success: function (response) {
+                showMessageSuccess(response.message);
+            },
+            error: function (response) {
+                showMessageError(response.responseJSON.message);
+            },
+            complete: function () {
+                table.ajax.reload(null, false);
+                $('#delete-user-modal').modal('hide');
+            }
+        });
+    }
+</script>

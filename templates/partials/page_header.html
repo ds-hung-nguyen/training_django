@@ -1,0 +1,37 @@
+{% if breadcrumbs %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <ol class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    {% if not breadcrumb.link %}
+                        <li class="breadcrumb-item active">{{ breadcrumbs.title }}</li>
+                    {% else %}
+                        <li class="breadcrumb-item"><a href="{{ breadcrumb.link }}">{{ breadcrumb.title }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex justify-content-between row">
+                <h1 class="col-12 col-md-auto mt-2">{{ pageTitle|default_if_none:'' }}</h1>
+                {% if links %}
+                    <div class="col-12 col-md-auto mt-2 text-right">
+                    {% for link in links %}
+                        <a href="{{ link.url|default_if_none:'#' }}">
+                            {{ link.title }}
+                            {% if link.icon %} <i class="{{ link.icon }}"></i> {% endif %}
+                        </a>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
